@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    container_name: backend
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      # Arahkan ke MySQL XAMPP di host Windows
+      DB_HOST: host.docker.internal
+      DB_USER: root
+      DB_PASSWORD: "" # kosongkan jika tidak pakai password
+      DB_NAME: db_beasiswa_universitas
+      DB_PORT: 3306
+      JWT_SECRET: secretkeysusahditebak123456.
+    volumes:
+      - ./backend/uploads:/app/uploads
+    command: ["npm", "start"]
+
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    restart: always
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: beasiswa_phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: host.docker.internal
+      PMA_PORT: 3306
+      UPLOAD_LIMIT: 128M
+    ports:
+      - "8080:80"
+
+volumes:
+  db_data:
